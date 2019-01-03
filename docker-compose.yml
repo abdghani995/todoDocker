@@ -1,17 +1,30 @@
-version: "2"
+version: "3"
 services:
   app:
     container_name: app
     restart: always
+    networks:
+      - todo-net
     build: .
     ports:
       - "3000:3000"
-    links:
+    depends_on:
       - mongo
   mongo:
     container_name: mongo
     image: mongo
+    networks:
+      - todo-net
     volumes:
-      - /var/lib/mongodb:/data/db
-    ports:
-      - "27017:27017"
+      - db_data:/data/db
+
+networks:
+  todo-net:
+
+volumes:
+  db_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/var/lib/mongodb'
